@@ -4,9 +4,9 @@ Next-Mail specification version 0.0.1.
 
 ## Payload format
 
-### Emails payload format
-
 A JSON UTF-8 string without comments.
+
+### Emails payload format
 
 ```
 {
@@ -252,7 +252,42 @@ Hyperlinks executing `javascript` code will simply not be allowed.
 
 ### Tables
 
-TODO
+```
+[table;border:0]
+  [row;color:000000;font-color:FFFFFF]
+    [col;span:3]
+      [img]image/png; ... [/img]
+    [/col]
+  [/row]
+  [row;color:44,33,44;font-color:FFFFFF]
+    [col;width:10]Number[col]
+    [col;width:70]Description[col]
+    [col;width:20]Amount ($USD)[col]
+  [/row]
+  [row]
+    [col]1[/col]
+    [col]Net income[/col]
+    [col]$14.564M[/col]
+  [row]
+  ...
+[/table]
+```
+
+Table's style modifiers:
+
+|Name          |Type               |Description                      |Default |
+|--------------|-------------------|---------------------------------|--------|
+|color         |HEX or decimals    |Background color                 |FFFFFF  |
+|font-color    |HEX or decimals    |Text color                       |000000  |
+|border        |numbers list (1-4) |Border width in pixels           |1       |
+|border-color  |HEX or decimals    |Border color                     |000000  |
+|margin        |numbers list (1-4) |Margin in pixels                 |0       |
+|padding       |numbers list (1-4) |Padding in pixels                |0       |
+|span          |number             |Columns span (`col` only)        |1       |
+|width         |number             |Width percentage                 |not set |
+|width-px      |number             |Width in pixels                  |not set |
+|align         |string (center,left,right,justified)|Horizontal alignment|left  |
+|valign        |string (middle,top,bottom)|Vertical alignment        |middle  |
 
 ### Escape codes
 
@@ -267,7 +302,7 @@ Next-mail escape sequences:
 
 ## Attachments
 
-The attachments data value is also a Base64 encoded string.
+Emails and replies can contain file attachments (optional). The attachments data value is also a Base64 encoded string.
 
 ```
   ...
@@ -279,3 +314,145 @@ The attachments data value is also a Base64 encoded string.
     }
     ...
 ```
+
+## Appointments
+
+Emails can include one appointment (optional).
+
+```
+{
+  ...
+  "appointment": {
+    "title": "Sales montly meeting",
+    "type": "Event",
+    "date": "2020-12-23T17:00:00Z"
+    "duration": {
+      "minutes": 30
+    },
+    "all-day": false,
+    "timezone": "GMT+5",
+    "reminders": [
+      {"minutes": -15},
+      {"days": -1}
+    ],
+    "guests": [
+      "john-doe@example.com", "sandra-doe@example.com", "sales-team@example.com"
+    ],
+    "phone-numbers": {
+      [
+        {"number": "+16172532871", "guest-access-code": "123456"},
+        {"number": "+16172532872", "guest-access-code": "123456"}
+      ]
+    },
+    "meeting-url": "meet.google.com/bco-vrja-abc",
+    "location": {
+      "address-line-1": "77 Massachusetts Ave",
+      "address-line-2": null,
+      "city": "Cambridge",
+      "state": "MA",
+      "zip-code": "02139",
+      "company-url": "www.example.com",
+      "phone-number-1": "202-555-5556",
+      "phone-number-1-type": "office",
+      "country-code": "1",
+      "meeting-room": "Room 14",
+      "gps-coordinates": {
+        "latitude": "42.3631788",
+        "longitude": "-71.0933875"
+      }
+    }
+  }
+}
+```
+
+## Tasks
+
+Sometimes you may send an email asking someone to perform a task and want to know the progress.
+The current state of the task will be visible to all persons who received that email. The state should be handled and updated by next-mail clients.
+
+Only one task per email allowed (optional).
+
+```
+{
+  ...
+  "task": {
+    "checklist": [
+      "Create the sales report",
+      "Peer review it",
+      "Send report to Sandra"
+    ],
+    "workflow": [
+      "1": "TODO",
+      "2": "IN-PROGRESS",
+      "3": "DONE"
+    ],
+    "end-states": ["3"],
+    "deadline": "2021-02-01T12:15:00Z"
+  }
+}
+```
+
+A description may not be necessary in the task itself, it must be written in the email's body.
+Checklist and deadline are optional but `worflow` and `end-states` are mandatory. There could be cases in which more that one state could be considered as a final state. Workflows may be created in the next-mail client so they are just copied to the email instead of being written every time.
+
+## Tags
+
+Emails may optionally include tags to help sort them or trigger actions setup using third party plugins.
+
+```
+{
+  ...
+  "tags": [
+    "sales-department", "reminders", "work"
+  ]
+}
+```
+
+```
+{
+  ...
+  "tags": [
+    "echo", "lights", "turn-on", "living room"
+  ]
+}
+```
+
+## Message triggers
+
+The user may be able to setup triggers for emails.
+
+For example, this may be useful for third party apps sending emails that perform some action and must be deleted after they have been used:
+"Move email to trash 5 minutes after it has been received"
+```
+"trigger": {
+  "event": {
+    "message": "received",
+    "from": "john.doe@example.com",
+    "includes-tags": ["echo", "google-assistant"]
+  },
+  "action": {
+    "move": "trash"
+  },
+  "delay": {
+    "minutes": 5
+  }
+}
+```
+
+Or to immediatelly move emails with a task to a folder after they are marked as done.
+"Move email to folder called 'Done' after it has been completed"
+```
+"trigger": {
+  "event": {
+    "task": ["DONE", "WONT-FIX"]
+  },
+  "action": {
+    "move": "Done"
+  },
+  "delay": null
+}
+```
+
+Triggers can only be defined by the recipient and should be setup in the next-mail client application.
+
+[TODO Revise security implications]
