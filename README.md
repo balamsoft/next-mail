@@ -171,7 +171,7 @@ For security reasons we should prevent the inclusion of HTML and Javascript code
 [H6]Lorem ipsum[/H6]
 ```
 
-### Basic text formating
+### Basic text formatting
 
 ```
 [b]Bold text[/b]
@@ -250,19 +250,40 @@ Next-mail servers and clients should implement a mechanism that verifies URLs an
 
 Hyperlinks executing `javascript` code will simply not be allowed.
 
+### Other HTML-equivalent tags supported
+
+```
+[div]...[/div]
+[span]...[/span]
+[code]...[/code]
+[cite]...[/cite]
+[blockquote]...[/blockquote]
+[p]...[/p]
+[pre]...[/pre]
+[ul]
+    [li]Milk[/li]
+    [li]Coffee[/li]
+[/ul]
+```
+
+The list is not meant to be extensive; it is only meant to support a subset of HTML tags sufficient for creating good-looking emails.
+Tags like `iframe`,`script`,`form`,`input`,`select`,`embed`and `canvas`, among others, won't and shouldn't be allowed in the future.
+
+This means no tracking scripts in your emails, which is a good thing.
+
 ### Tables
 
 ```
-[table;border:0]
-  [row;color:000000;font-color:FFFFFF]
-    [col;span:3]
+[table;class:balance-sheet]
+  [row;class:banner-row]
+    [col]
       [img]image/png; ... [/img]
     [/col]
   [/row]
-  [row;color:44,33,44;font-color:FFFFFF]
-    [col;width:10]Number[col]
-    [col;width:70]Description[col]
-    [col;width:20]Amount ($USD)[col]
+  [row;class:header-row]
+    [col]Number[col]
+    [col]Description[col]
+    [col]Amount ($USD)[col]
   [/row]
   [row]
     [col]1[/col]
@@ -273,21 +294,24 @@ Hyperlinks executing `javascript` code will simply not be allowed.
 [/table]
 ```
 
-Table's style modifiers:
+### CSS Formatting
 
-|Name          |Type               |Description                      |Default |
-|--------------|-------------------|---------------------------------|--------|
-|color         |HEX or decimals    |Background color                 |FFFFFF  |
-|font-color    |HEX or decimals    |Text color                       |000000  |
-|border        |numbers list (1-4) |Border width in pixels           |1       |
-|border-color  |HEX or decimals    |Border color                     |000000  |
-|margin        |numbers list (1-4) |Margin in pixels                 |0       |
-|padding       |numbers list (1-4) |Padding in pixels                |0       |
-|span          |number             |Columns span (`col` only)        |1       |
-|width         |number             |Width percentage                 |not set |
-|width-px      |number             |Width in pixels                  |not set |
-|align         |string (center,left,right,justified)|Horizontal alignment|left  |
-|valign        |string (middle,top,bottom)|Vertical alignment        |middle  |
+As you could see in the `tables` section you can use class names. The CSS code for a next-mail 
+email is defined in the `css` attribute at the root node.
+
+```
+{
+  ...
+  "body": "[div;class=mail-title]Some text[/div]",
+  "css": ".mail-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #EE0022;
+  }"
+  ...
+}
+```
 
 ### Escape codes
 
@@ -439,7 +463,7 @@ For example, this may be useful for third party apps sending emails that perform
 }
 ```
 
-Or to immediatelly move emails with a task to a folder after they are marked as done.
+Or to immediately move emails with a task to a folder after they are marked as done.
 "Move email to folder called 'Done' after it has been completed"
 ```
 "trigger": {
