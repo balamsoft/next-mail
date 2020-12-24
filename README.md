@@ -22,8 +22,6 @@ A JSON UTF-8 string without comments.
   "sent-time": "2020-12-22T00:04:12Z",
 
   "subject": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
-  "font-family": "example-com-serif",
-  "default-font-family": "sans-serif",
 
   "body":"
     [H1]Monthly Report January - 2021[/H1]
@@ -100,7 +98,7 @@ Any other combinations should be considered as an invalid message. For example, 
 
 ## Sender identification
 
-### Verification request
+### Verification request
 
 An HTTP request is sent to the original domain including the original sender's address and the `from-fingerprint` and the `message-id` values as follows:
 
@@ -123,7 +121,7 @@ are deleted then any previous emails sent from that email account will be render
 
 Next-mail clients should keep indexes for values: `from`, `from-fingerprint` and `message-id`. Mail clients should actively refuse any emails received with a duplicate `from-fingerprint` or `message-id` values since those values are meant to be unique at all times. Re-sending or forwarding emails should provide new values for those two fields at the moment the message is sent.
 
-### Verification endpoint
+### Verification endpoint
 
 The next-mail verification URL will be constructed from the domain in the sender's mail address. The company should publish a subdomain called `nmail` which in turn should provide an endpoint called `verify`.
 
@@ -181,75 +179,6 @@ For security reasons we should prevent the inclusion of HTML and Javascript code
 [center]centered text[/center]
 [right]right aligned[/right]
 [justify]justified text[/justify]
-```
-
-### Font size
-
-```
-[{font-size}]{text}[/{font-size}]
-```
-
-Example:
-```
-[14]Lorem ipsum dolor sit amet, consectetur adipiscing elit[/14]
-```
-
-The text above would be shown in 14 points size font.
-
-### Font family
-
-Fonts cannot be attached or included in emails. Instead, fonts will be resolved by the next-mail client based on the fonts installed in the operating system. The emaill will be rendered with the font specified by `font-family` and when this one doesn't exist it will default to `default-font-family` and, in last instance, to a font specified in the next-mail client settings.
-
-```
-"font-family": "example-com-serif",
-"default-font-family": "sans-serif"
-```
-
-Both attributes are optional, when both `font-family` and `default-font-family` are undefined the client will render the email in the font specified in the next-mail client settings.
-
-### Font color
-
-```
-[rgb:{hex-number}]{text}[/rgb]
-[rgb:{r},{g},{b}]{text}[/rgb]
-```
-
-Examples:
-```
-[rgb:EBE100]Lorem ipsum dolor sit amet, consectetur adipiscing elit[/rgb]
-[rgb:235,255,0]Lorem ipsum dolor sit amet, consectetur adipiscing elit[/rgb]
-```
-
-### Images
-
-External images:
-For security reasons including external images is not supported.
-
-Inline images:
-```
-[img]image/png;iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAYAAAAmlE46AAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAA6gAwAEAAAAAQAAABAAAAAAfkeR3QAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAB5JREFUKBVj/A8EDGQAJjL0gLWMasQTcqOBM8IDBwBlLAQctY7BrAAAAABJRU5ErkJggg==[/img]
-```
-
-### Hyperlinks
-
-```
-[mailto:{Hyperlink text}]{Email Address}[/mailto]
-[a:{Hyperlink text}]{URL}[/a]
-```
-
-Examples:
-```
-[mailto:John Doe, Finance]john-doe@example.com[/mailto]
-[a:http://www.example.com/events/2021/March/security-awareness-meeting]Security Awareness Meeting[/a]
-```
-
-Next-mail servers and clients should implement a mechanism that verifies URLs and renders them unclickable to all users when blacklisted. Before visiting the link the next-mail client will create a shortened version of it, the short URL will be opened instead of the original one.
-
-Hyperlinks executing `javascript` code will simply not be allowed.
-
-### Other HTML-equivalent tags supported
-
-```
 [div]...[/div]
 [span]...[/span]
 [code]...[/code]
@@ -264,9 +193,35 @@ Hyperlinks executing `javascript` code will simply not be allowed.
 ```
 
 The list is not meant to be extensive; it is only meant to support a subset of HTML tags sufficient for creating good-looking emails.
-Tags like `iframe`,`script`,`form`,`input`,`select`,`embed`and `canvas`, among others, won't and shouldn't be allowed in the future.
+Tags like `iframe`,`script`,`form`,`input`,`select`,`embed`and `canvas`, among others, won't and shouldn't be allowed in the future. This means no tracking/analytics scripts in the emails you receive.
 
-This means no tracking scripts in your emails, which is a good thing.
+### Images
+
+External images:
+For security reasons external images are not supported.
+(TODO: consider allowing external images, then fetching the image files in the back end and translating them into Base64 strings before being sent to the front end)
+
+Inline images:
+```
+[img]image/png;iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAYAAAAmlE46AAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAA6gAwAEAAAAAQAAABAAAAAAfkeR3QAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAB5JREFUKBVj/A8EDGQAJjL0gLWMasQTcqOBM8IDBwBlLAQctY7BrAAAAABJRU5ErkJggg==[/img]
+```
+
+### Hyperlinks
+
+```
+[mailto:{Hyperlink text}]{Email Address}[/mailto]
+[url:{Hyperlink text}]{URL}[/url]
+```
+
+Examples:
+```
+[mailto:John Doe, Finance]john-doe@example.com[/mailto]
+[url:Security Awareness Meeting]http://www.example.com/events/2021/March/security-awareness-meeting[/url]
+```
+
+Next-mail servers and clients should implement a mechanism that verifies URLs and renders them unclickable to all users when blacklisted. Before visiting the link the next-mail client will create a shortened version of it, the short URL will be opened instead of the original one.
+
+Hyperlinks executing `javascript` code will simply not be allowed.
 
 ### Tables
 
@@ -310,6 +265,43 @@ email is defined in the `css` attribute at the root node.
 }
 ```
 
+You can also define classes in other tags seen before. Use a semicolon (;) to separate the class definition from the rest of the tag as follows:
+
+```
+[div;class:main-section]...[/div]
+[code;class:code-block-java]...[/code]
+[mailto:John Doe, Finance;class:mailto-link]john-doe@example.com[/mailto]
+[ul;class:numbered-list]...[/ul]
+[12;class:simple-text]...[/12]
+```
+
+Also you can add styles to all tags of the same type just like in HTML:
+
+```
+{
+    ...
+    "body": "
+        [div]This is a div[/div]
+        [div]This is another div[/div]
+        [span]This is a span[/span]
+    ",
+    "css": "div {
+        display: block;
+        font-size: 14pt;
+        color: black;
+    }
+    span {
+        display: inline-block;
+        font-size: 12pt;
+        background-color: black;
+        color: white;
+    }
+    "
+}
+```
+
+Tags like `url` and `mailto` will become HTML anchors (`<a href="..."/>`).
+
 ### Escape codes
 
 Next-mail escape sequences:
@@ -323,7 +315,7 @@ Next-mail escape sequences:
 
 ## Attachments
 
-Emails and replies can contain file attachments (optional). The attachments data value is also a Base64 encoded string.
+Emails and replies can contain file attachments (optional). The attachments' data value is also a Base64 encoded string.
 
 ```
   ...
@@ -414,7 +406,7 @@ Only one task per email allowed (optional).
 ```
 
 A description may not be necessary in the task itself, it must be written in the email's body.
-Checklist and deadline are optional but `worflow` and `end-states` are mandatory. There could be cases in which more that one state could be considered as a final state. Workflows may be created in the next-mail client so they are just copied to the email instead of being written every time.
+Checklist and deadline are optional but `worflow` and `end-states` are mandatory. There could be cases in which more that one state could be considered as a final state. Workflows may be created in the next-mail client and they are copied to the email instead of being written every time per email.
 
 ## Tags
 
