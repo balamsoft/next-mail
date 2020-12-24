@@ -10,7 +10,7 @@ A JSON UTF-8 string without comments.
 
 ```
 {
-  "version": "next-mail-0.0.1",
+  "version": "0.0.1",
   "message-id": "9e279631-0055-44be-b297-00d0ed6aae46",
   "message-id-algorithm": "uuid-v4",
 
@@ -40,11 +40,10 @@ A JSON UTF-8 string without comments.
     "state": "MA",
     "zip-code": "02139",
     "company-url": "www.example.com",
-    "phone-number-1": "202-555-5555",
-    "phone-number-1-type": "office",
-    "phone-number-2": "202-555-0719",
-    "phone-number-2-type": "mobile",
-    "country-code": "1"
+    "phone-numbers": [
+        {"number": "202-555-5555", "type": "OFFICE", "country-code": 1},
+        {"number": "202-555-0719", "type": "MOBILE", "country-code": 1}
+    ]
   }
   "attachments": [
     {
@@ -62,7 +61,7 @@ Unlike with traditional emails replies do not include the original message, inst
 
 ```
 {
-  "version": "next-mail-0.0.1",
+  "version": "0.0.1",
   "reply-id": "9e279631-0055-44be-b297-00d0ed6aae46",
   "reply-id-algorithm": "uuid-v4",
   "original-message-id": "9e279631-0055-44be-b297-00d0ed6aae46",
@@ -70,8 +69,6 @@ Unlike with traditional emails replies do not include the original message, inst
   "from": "sandra-doe@example.com",
   "from-fingerprint": "$2y$12$sgofxSYqPzFN78yFneHU6OMY3ydUMtXjG6fvSRkfCNJNudlkzOWQq",
   "sent-time": "2020-12-22T00:04:23Z",
-
-  "subject": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 
   "body":"Thanks John, I'll check it.",
   "signature": {
@@ -83,9 +80,9 @@ Unlike with traditional emails replies do not include the original message, inst
     "state": "MA",
     "zip-code": "02139",
     "company-url": "www.example.com",
-    "phone-number-1": "202-555-5556",
-    "phone-number-1-type": "office",
-    "country-code": "1"
+    "phone-numbers": [
+        {"number": "202-555-5556", "type": "OFFICE", "country-code": 1}
+    ]
   }
   "attachments": []
 }
@@ -376,9 +373,9 @@ Emails can include one appointment (optional).
       "state": "MA",
       "zip-code": "02139",
       "company-url": "www.example.com",
-      "phone-number-1": "202-555-5556",
-      "phone-number-1-type": "office",
-      "country-code": "1",
+      "phone-numbers": [
+        {"number": "202-555-5645", "type": "OFFICE", "country-code": 1}
+      ]
       "meeting-room": "Room 14",
       "gps-coordinates": {
         "latitude": "42.3631788",
