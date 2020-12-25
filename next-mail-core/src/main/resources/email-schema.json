@@ -119,171 +119,230 @@
             }
           },
           "required": ["number", "type", "country-code"]
+        }
+      },
+      "required": [
+        "full-name"
+      ]
+    },
+    "attachments": {
+      "type": "array",
+      "properties": {
+        "file-name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
         },
-        "attachments": {
+        "mime-type": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 50
+        },
+        "data": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000000
+        }
+      },
+      "required": ["file-name", "mime-type", "data"]
+    },
+    "appointment": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "date": {
+          "type": "string",
+          "description": "yyyy-MM-dd"
+        },
+        "start-time": {
+          "type": "string",
+          "description": "HH:mm"
+        },
+        "end-time": {
+          "type": "string",
+          "description": "HH:mm"
+        },
+        "all-day": {
+          "type": "boolean",
+          "default": false
+        },
+        "timezone": {
+          "type": "number",
+          "description": "GMT+/-{number}, i.e. when number is -6 it will become 'GMT-6'. Default: 0 (UTC).",
+          "default": 0
+        },
+        "reminders": {
           "type": "array",
-          "properties": {
-            "file-name": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 100
+          "items": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "default": -15
+              },
+              "type": {
+                "type": "string",
+                "enum": ["MINUTES", "HOURS", "DAYS"],
+                "default": "MINUTES"
+              }
             },
-            "mime-type": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 50
-            },
-            "data": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 4000000
-            }
+            "required": ["amount", "type"]
           },
-          "required": ["file-name", "mime-type", ""]
+          "minLength": 0
         },
-        "appointment": {
+        "guests": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 5
+          }
+        },
+        "phone-numbers": {
           "type": "object",
           "properties": {
-            "title": {
+            "number": {
               "type": "string",
-              "minLength": 1,
-              "maxLength": 100
+              "minLength": 5
             },
-            "date": {
+            "type": {
               "type": "string",
-              "description": "yyyy-MM-dd"
+              "enum": ["MOBILE", "WORK_MOBILE", "PERSONAL", "HOME",
+                "WORK_FAX", "HOME_FAX", "OTHER", "CAR"],
+              "default": "WORK"
             },
-            "start-time": {
-              "type": "string",
-              "description": "HH:mm"
-            },
-            "end-time": {
-              "type": "string",
-              "description": "HH:mm"
-            },
-            "all-day": {
-              "type": "boolean",
-              "default": false
-            },
-            "timezone": {
+            "country-code": {
               "type": "number",
-              "description": "GMT+/-{number}, i.e. when number is -6 it will become 'GMT-6'. Default: 0 (UTC).",
-              "default": 0
+              "default": 1
+            }
+          },
+          "required": ["number", "type", "country-code"]
+        },
+        "meeting-url": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 200
+        },
+        "location": {
+          "properties": {
+            "address-line-1": {
+              "type": "string",
+              "maxLength": 88
             },
-            "reminders": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "amount": {
-                    "type": "number",
-                    "default": -15
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": ["MINUTES", "HOURS", "DAYS"],
-                    "default": "MINUTES"
-                  }
-                },
-                "required": ["amount", "type"]
-              },
-              "minLength": 0
+            "address-line-2": {
+              "type": "string",
+              "maxLength": 88
+            },
+            "city": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "state": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "zip-code": {
+              "type": "string",
+              "maxLength": 20
+            },
+            "company-url": {
+              "type": "string",
+              "maxLength": 150
             },
             "guests": {
               "type": "array",
               "items": {
                 "type": "string",
                 "minLength": 5
-              }
+              },
+              "minLength": 0
             },
-            "phone-numbers": {
+            "meeting-room": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30
+            },
+            "gps-coordinates": {
               "type": "object",
               "properties": {
-                "number": {
+                "latitude": {
                   "type": "string",
-                  "minLength": 5
+                  "minLength": 4
                 },
-                "type": {
+                "longitude": {
                   "type": "string",
-                  "enum": ["MOBILE", "WORK_MOBILE", "PERSONAL", "HOME",
-                    "WORK_FAX", "HOME_FAX", "OTHER", "CAR"],
-                  "default": "WORK"
-                },
-                "country-code": {
-                  "type": "number",
-                  "default": 1
+                  "minLength": 4
                 }
               },
-              "required": ["number", "type", "country-code"]
-            },
-            "meeting-url": {
-              "type": "string",
-              "minLength": 5,
-              "maxLength": 200
-            },
-            "location": {
-              "properties": {
-                "address-line-1": {
-                  "type": "string",
-                  "maxLength": 88
-                },
-                "address-line-2": {
-                  "type": "string",
-                  "maxLength": 88
-                },
-                "city": {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                "state": {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                "zip-code": {
-                  "type": "string",
-                  "maxLength": 20
-                },
-                "company-url": {
-                  "type": "string",
-                  "maxLength": 150
-                },
-                "guests": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 5
-                  },
-                  "minLength": 0
-                },
-                "meeting-room": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 30
-                },
-                "gps-coordinates": {
-                  "type": "object",
-                  "properties": {
-                    "latitude": {
-                      "type": "string",
-                      "minLength": 4
-                    },
-                    "longitude": {
-                      "type": "string",
-                      "minLength": 4
-                    }
-                  },
-                  "required": ["latitude", "longitude"]
-                }
-              },
-              "required": ["address-line-1"]
+              "required": ["latitude", "longitude"]
             }
           },
-          "required": ["title", "date", "all-day", "timezone"]
+          "required": ["address-line-1"]
         }
       },
-      "required": [
-        "full-name"
-      ]
+      "required": ["title", "date", "all-day", "timezone"]
+    },
+    "task": {
+      "description": "The recipient or recipients are being asked to perform a task. When individual is true then the progress will be tracked separately for each recipient, when false the state is the same for everyone.",
+      "type": "object",
+      "properties": {
+        "individual": {
+          "type": "boolean",
+          "description": "True: the task is individual, each recipient in the 'to' field will have to perform a task and report a progress individually. False: the progress of the task is one for everyone.",
+          "default": false
+        },
+        "workflow": {
+          "description": "An ordered (first to last) list of states that the task will follow until an 'end state' is set as the current state of the task.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "uniqueItems": true
+          },
+          "minLength": 2,
+          "default": ["TODO", "IN PROGRESS", "DONE"]
+        },
+        "end-states": {
+          "description": "Indicates which if the states defined in the workflow can be considered end states. At least one required.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minLength": 1,
+          "default": ["DONE"]
+        },
+        "checklist": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "deadline": {
+          "type": "string",
+          "description": "Timestamp in ISO 8601, always at UTC timezone."
+        },
+        "timezone": {
+          "type": "number",
+          "description": "GMT+/-{number}, i.e. when number is -6 it will become 'GMT-6'. Default: 0 (UTC).",
+          "default": 0
+        }
+      },
+      "required": ["workflow", "end-states", "individual"]
+    },
+    "tags": {
+      "description": "Emails may optionally include tags to help sort them or trigger actions setup using third party plugins.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "uniqueItems": true
+      },
+      "minLength": 0
     }
   },
   "required": [
