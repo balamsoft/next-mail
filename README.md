@@ -8,8 +8,8 @@ Every email will be sent in JSON format and UTF-16 encoding (without JSON commen
 All properties must follow the kebab-case naming convention.
 
 Some attributes are optional, in such case they can be omitted or provided with a null value.
-When an optional attribute is omitted it should be assumed to be null.
-When a mandatory attribute is missing or null the email should be considered invalid.
+When an optional attribute is omitted then it should be assumed to be null.
+When a mandatory attribute is missing or null then the email should be considered invalid.
 
 ### Emails payload format
 
@@ -82,7 +82,6 @@ Optional attributes are:
 |appointment  |An email can include 0 or 1 appointment (see the Appointments section)|
 |task         |An email can include 0 or 1 task (see the Tasks section)|
 |tags         |An email can include string tags (see the Tags section)|
-|trigger      |An email can include 0 or 1 trigger (see the Triggers section)|
 
 ### Sending and receiving emails
 
@@ -198,7 +197,6 @@ Optional attributes are:
 |appointment  |An email can include 0 or 1 appointment (see the Appointments section)|
 |task         |An email can include 0 or 1 task (see the Tasks section)|
 |tags         |An email can include string tags (see the Tags section)|
-|trigger      |An email can include 0 or 1 trigger (see the Triggers section)|
 
 ## How replies work
 
@@ -376,7 +374,7 @@ Hyperlinks executing `javascript` code will simply not be allowed.
 ```
 [table;class:balance-sheet]
   [row;class:banner-row]
-    [col]
+    [col;span:3]
       [img]image/png; ... [/img]
     [/col]
   [/row]
@@ -571,18 +569,20 @@ Only one task per email allowed (optional).
 {
   ...
   "task": {
+    "individual": false,
+    "workflow": [
+      "TODO",
+      "IN-PROGRESS",
+      "DONE"
+    ],
+    "end-states": ["3"],
     "checklist": [
       "Create the sales report",
       "Peer review it",
       "Send report to Sandra"
     ],
-    "workflow": [
-      "1": "TODO",
-      "2": "IN-PROGRESS",
-      "3": "DONE"
-    ],
-    "end-states": ["3"],
-    "deadline": "2021-02-01T12:15:00Z"
+    "deadline": "2021-02-01T12:15:00Z",
+    "timezone": -5
   }
 }
 ```
@@ -590,6 +590,8 @@ Only one task per email allowed (optional).
 A description may not be necessary in the task itself, it must be written in the email's body.
 Checklist and deadline are optional but `worflow` and `end-states` are mandatory. There could be cases in which more that one state could be considered as a final state. Workflows may be created in the next-mail client and they are copied to the email instead of being written every time per email.
 
+Tasks only apply to recipients in the `to` field and only within the same domain as the sender. 
+Tasks can be individual (one state per recipient) or not (one state for everyone).
 
 ## Tags
 
@@ -613,43 +615,3 @@ Emails may optionally include tags to help sort them or trigger actions setup us
 }
 ```
 
-
-## Message triggers
-
-The user may be able to setup triggers for emails.
-
-For example, this may be useful for third party apps sending emails that perform some action and must be deleted after they have been used:
-"Move email to trash 5 minutes after it has been received"
-```
-"trigger": {
-  "event": {
-    "message": "received",
-    "from": "john.doe@example.com",
-    "includes-tags": ["echo", "google-assistant"]
-  },
-  "action": {
-    "move": "trash"
-  },
-  "delay": {
-    "minutes": 5
-  }
-}
-```
-
-Or to immediately move emails with a task to a folder after they are marked as done.
-"Move email to folder called 'Done' after it has been completed"
-```
-"trigger": {
-  "event": {
-    "task": ["DONE", "WONT-FIX"]
-  },
-  "action": {
-    "move": "Done"
-  },
-  "delay": null
-}
-```
-
-Triggers can only be defined by the recipient and should be setup in the next-mail client application.
-
-[TODO Revise security implications]
