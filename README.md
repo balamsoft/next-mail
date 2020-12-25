@@ -575,9 +575,10 @@ Only one task per email allowed (optional).
     "workflow": [
       "TODO",
       "IN-PROGRESS",
-      "DONE"
+      "DONE",
+      "WONT-FIX"
     ],
-    "end-states": ["3"],
+    "end-states": ["DONE", "WONT-FIX"],
     "checklist": [
       "Create the sales report",
       "Peer review it",
