@@ -2,6 +2,8 @@
 
 Next-Mail specification version 0.0.1.
 
+Please refer to the JSON schema files at [next-mail-core/src/main/resources](https://github.com/balamsoft/next-mail/tree/main/next-mail-core/src/main/resources).
+
 ## Payload format
 
 Every email will be sent in JSON format and UTF-16 encoding (without JSON comments).
