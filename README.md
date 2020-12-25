@@ -8,8 +8,8 @@ Every email will be sent in JSON format and UTF-16 encoding (without JSON commen
 All properties must follow the kebab-case naming convention.
 
 Some attributes are optional, in such case they can be omitted or provided with a null value.
-When an optional attribute is omitted it should be assumed to be null.
-When a mandatory attribute is missing or null the email should be considered invalid.
+When an optional attribute is omitted then it should be assumed to be null.
+When a mandatory attribute is missing or null then the email should be considered invalid.
 
 ### Emails payload format
 
@@ -376,7 +376,7 @@ Hyperlinks executing `javascript` code will simply not be allowed.
 ```
 [table;class:balance-sheet]
   [row;class:banner-row]
-    [col]
+    [col;span:3]
       [img]image/png; ... [/img]
     [/col]
   [/row]
