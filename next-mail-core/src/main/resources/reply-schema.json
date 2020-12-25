@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "JSON schema for next-mail emails (v0.0.1)",
+  "title": "JSON schema for next-mail replies (v0.0.1)",
   "type": "object",
   "additionalProperties": false,
   "properties": {
