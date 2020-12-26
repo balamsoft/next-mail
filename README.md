@@ -303,20 +303,15 @@ ISO 8601 - Limited to UTC only, clients should convert the dates to the local da
 
 For security reasons we should prevent the inclusion of HTML and Javascript code in messages. For these reasons a custom markup language will be used to format text in emails.
 
-### Headers
-
-```
-[H1]Lorem ipsum[/H1]
-[H2]Lorem ipsum[/H2]
-[H3]Lorem ipsum[/H3]
-[H4]Lorem ipsum[/H4]
-[H5]Lorem ipsum[/H5]
-[H6]Lorem ipsum[/H6]
-```
-
 ### Basic text formatting
 
 ```
+[h1]Lorem ipsum[/h1]
+[h2]Lorem ipsum[/h2]
+[h3]Lorem ipsum[/h3]
+[h4]Lorem ipsum[/h4]
+[h5]Lorem ipsum[/h5]
+[h6]Lorem ipsum[/h6]
 [b]Bold text[/b]
 [i]Italics[/i]
 [u]Underline[/u]
@@ -375,22 +370,26 @@ Hyperlinks executing `javascript` code will simply not be allowed.
 
 ```
 [table;class:balance-sheet]
-  [row;class:banner-row]
-    [col;span:3]
-      [img]image/png; ... [/img]
-    [/col]
-  [/row]
-  [row;class:header-row]
-    [col]Number[col]
-    [col]Description[col]
-    [col]Amount ($USD)[col]
-  [/row]
-  [row]
-    [col]1[/col]
-    [col]Net income[/col]
-    [col]$14.564M[/col]
-  [row]
-  ...
+  [thead]
+    [row;class:banner-row]
+      [col;span:3]
+        [img]image/png; ... [/img]
+      [/col]
+    [/row]
+  [/thead]
+  [tbody]
+    [row;class:header-row]
+      [col]Number[col]
+      [col]Description[col]
+      [col]Amount ($USD)[col]
+    [/row]
+    [row]
+      [col]1[/col]
+      [col]Net income[/col]
+      [col]$14.564M[/col]
+    [row]
+    ...
+  [/tbody]
 [/table]
 ```
 
@@ -420,7 +419,6 @@ You can also define classes in other tags seen before. Use a semicolon (;) to se
 [code;class:code-block-java]...[/code]
 [mailto:John Doe, Finance;class:mailto-link]john-doe@example.com[/mailto]
 [ul;class:numbered-list]...[/ul]
-[12;class:simple-text]...[/12]
 ```
 
 Also you can add styles to all tags of the same type just like in HTML:
