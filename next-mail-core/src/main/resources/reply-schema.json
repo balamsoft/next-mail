@@ -5,7 +5,7 @@
   "additionalProperties": false,
   "properties": {
     "version": {
-      "description": "Indicates what parser version should be used to read and process this email.",
+      "description": "Indicates what schema should be used to validate and process this reply.",
       "type": "string",
       "default": "0.0.1"
     },
