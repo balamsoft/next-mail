@@ -104,8 +104,8 @@ So, when a domain receives an email the hash string must be stored as the `messa
 |-------------------------|--------------------------------------------------------------|
 |message-id               |A string that identifies the email received across the world. |
 
-When an email is sent only one message is sent to each different domain instead of one message per recipient.
-The list of different domains can be obtained by looking at the recipients (from, to, cc, bcc) in the email.
+When an email is sent only one message is sent to each different domain instead of one message per receiver.
+The list of different domains can be obtained by looking at the receivers (from, to, cc, bcc) in the email.
 
 For example, when an email is sent as follows:
 
@@ -119,10 +119,10 @@ For example, when an email is sent as follows:
 
 In this case there are four different domains involved: foo.com, bar.com, baz.org and zmail.com.
 However foo.com will save the email in the local database. This means that only 3 copies of this email will be sent over the net. 
-After each domain receives its respective copy then each one of those servers will internally route a copy to each individual recipient.
+After each domain receives its respective copy then each one of those servers will internally route a copy to each individual receiver.
 
 Following the previous example, foo.com will internally send a copy to steve@foo.com (sent folder) and one to each member of the sale-team group.
-Other domains should do the same: save the email in the database and rout it to each individual recipient that belongs to that domain in particular.
+Other domains should do the same: save the email in the database and rout it to each individual receiver that belongs to that domain in particular.
 
 ```
 [email]
@@ -208,7 +208,7 @@ will be sent to each domain (including the domain of the user sending the reply)
 For this reason the reply should contain the salted hash code that identifies the original email.
 
 When a reply is sent only one message is sent to each different domain instead of one message per destinatary.
-The list of different domains can be obtained by looking at the recipients (from, to, cc, bcc) in the original email.
+The list of different domains can be obtained by looking at the receivers (from, to, cc, bcc) in the original email.
 
 For example, if the original email was sent to these persons:
 
@@ -222,11 +222,11 @@ For example, if the original email was sent to these persons:
 }
 ```
 
-When any of the recipients replies to the email (i.e. lisa@bar.com) then bar.com saves the reply in the local database
+When any of the receivers replies to the email (i.e. lisa@bar.com) then bar.com saves the reply in the local database
 and sends a copy of the reply to the other 3 domains: foo.com, baz.org and zmail.com.
 
-After each domain receives a copy and saves it, then all recipients should be sent a push notification containing the reply.
-In order to know who the original recipients were, the original message should be found in the database using the `original-message-id`.
+After each domain receives a copy and saves it, then all receivers should be sent a push notification containing the reply.
+In order to know who the original receivers were, the original message should be found in the database using the `original-message-id`.
 Each domain should only care about notifying the users that belong to the current organization.
 
 ```
@@ -593,8 +593,8 @@ Only one task per email allowed (optional).
 A description may not be necessary in the task itself, it must be written in the email's body.
 Checklist and deadline are optional but `worflow` and `end-states` are mandatory. There could be cases in which more that one state could be considered as a final state. Workflows may be created in the next-mail client and they are copied to the email instead of being written every time per email.
 
-Tasks only apply to recipients in the `to` field and only within the same domain as the sender. 
-Tasks can be individual (one state per recipient) or not (one state for everyone).
+Tasks only apply to receivers in the `to` field and only within the same domain as the sender. 
+Tasks can be individual (one state per receiver) or not (one state for everyone).
 
 ## Tags
 
@@ -618,3 +618,106 @@ Emails may optionally include tags to help sort them or trigger actions setup us
 }
 ```
 
+# Asymmetric Encryption and Decryption
+
+Next-mail emails travel over TCP and should be encrypted using SSL/TLS to protect their users. 
+However, this means that emails are being decrypted once they reach the target server. TLS isn't end-to-end encryption. 
+They could still be captured or stolen by someone with access to the internal network infrastructure. 
+
+To add another layer of protection next-mail messages can be encrypted end-to-end using asymmetric encryption.
+One to one emails be encrypted to secure key parts of it during transit so only the sender and
+the receiver can see their contents.
+
+## Encrypted email sections
+
+Not all parts of an email can be encrypted, some information must still be readable by the mail router to be able to dispatch the encrypted messages.
+The following sections will be encrypted in both emails and replies that belong to a private conversation:
+
+- The subject
+- The email body
+- The values of each one of the properties in each attachment (including the file's data)
+- The values of each one of the properties in the sender's signature
+- The values of each one of the properties in appointments and tasks
+- The tags
+
+## Sending an encrypted email
+
+A private one-to-one conversation starts with a request sent from the mail server of person A to
+the mail server of person B.
+
+```
+{
+  "version": "0.0.1",
+  "type": "public-key-request",
+  "from": "john-doe@example.com",
+  "to": "lisa-miller@acme.com"
+}
+```
+
+This request will be sent when the user A chooses to send an encrypted email to person B. If the next-mail server of person B
+agrees to provide a public key (this feature could be disabled in the server configuration) then the public key will be 
+returned as a response:
+
+```
+{
+  "version": "0.0.1",
+  "type": "public-key-response",
+  "from": "john-doe@example.com",
+  "owner": "lisa-miller@acme.com",
+  "public-key": "MIIBCgKCAQEA+xGZ/wcz9ugFpP07Nspo6U17l0YhFiFpxxU4pTk3Lifz9R3zsIsuERwta7+fWIfxOo208ett/jhskiVodSEt3QBGh4XBipyWopKwZ93HHaDVZAALi/2A+xTBtWdEo7XGUujKDvC2/aZKukfjpOiUI8AhLAfjmlcD/UZ1QPh0mHsglRNCmpCwmwSXA9VNmhz+PiB+Dml4WWnKW/VHo2ujTXxq7+efMU4H2fny3Se3KYOsFPFGZ1TNQSYlFuShWrHPtiLmUdPoP6CV2mML1tk+l7DIIqXrQhLUKDACeM5roMx0kLhUWB8P+0uj1CNlNN4JRZlC7xFfqiMbFRU9Z4N6YwIDAQAB"
+}
+```
+
+Once the sender has the receiver's public key the email can be encrypted. Now, all the replies will automatically be encrypted as well.
+For this purpose the email must include the sender's public key, so it must be included in the email.
+
+```
+{
+  "version": "0.0.1",
+  "type": "email",
+  "encrypted": true,
+  "from": "john-doe@example.com",
+  "sender-fingerprint": "$2y$12$sgofxSYqPzFN78yFneHU6OMY3ydUMtXjG6fvSRkfCNJNudlkzOWQq",
+  "sender-public-key": "AAAAB3NzaC1yc2EAAAABJQAAAQB/nAmOjTmezNUDKYvEeIRf2YnwM9/uUG1d0BYsc8/tRtx+RGi7N2lUbp728MXGwdnL9od4cItzky/zVdLZE2cycOa18xBK9cOWmcKS0A8FYBxEQWJ/q9YVUgZbFKfYGaGQxsER+A0w/fX8ALuk78ktP31K69LcQgxIsl7rNzxsoOQKJ/CIxOGMMxczYTiEoLvQhapFQMs3FL96didKr/QbrfB1WT6s3838SEaXfgZvLef1YB2xmfhbT9OXFE3FXvh2UPBfN+ffE7iiayQf/2XR+8j4N4bW30DiPtOQLGUrH1y5X/rpNZNlWW2+jGIxqZtgWg7lTy3mXy5x836Sj/6L"
+  
+  "to": ["lisa-miller@acme.com"],
+  "cc": [],
+  "bcc": [],
+  "sent-time": "2021-01-14T21:04:12Z",
+
+  "subject": "*encrypted subject using the Lisa's public key*",
+
+  "body":"*encrypted email body*",
+  ...
+}
+```
+
+When (B) replies to the email sent by (A) the reply will automatically be encrypted.
+
+```
+{
+  "version": "0.0.1",
+  "type": "reply",
+  "encrypted": true,
+  "from": "lisa-miller@acme.com",
+  "sender-fingerprint": "$2y$12$hulfxSYqPzFN78yFneHU6OMY3ydUMtErG6fvSRkfCNJNudlkzOWQq",
+  
+  "original-message-id": "2a76384d245c2aae1c74fa4c50a74c77c17b6e9b160cda0cf583e89ec7b7fc22",
+  "sent-time": "2021-01-15T08:12:54Z",
+
+  "body":"*encrypted mail body using John's public key*",
+  ...
+}
+```
+
+Non encrypted replies should be actively denied by the next-mail servers as part of a private thread.
+
+## Precautions
+
+When one of the actors receives an encrypted mail or reply that cannot be decrypted using his/her private key
+the receiver should be notified. The message may have not been encrypted properly, or the public/private 
+keys of the receiver could have changed since that message was sent.
+
+In the event that a user loses his/her private keys all the emails encrypted with them will become unreadable and
+unrecoverable. In order to minimize data loss the users may opt to keep an unencrypted copy of those messages
+in a device or in a cloud storage service of his/her choice (although there are inherent risks in doing so).
