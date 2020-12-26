@@ -84,6 +84,9 @@ Optional attributes are:
 |appointment  |An email can include 0 or 1 appointment (see the Appointments section)|
 |task         |An email can include 0 or 1 task (see the Tasks section)|
 |tags         |An email can include string tags (see the Tags section)|
+|acknowledge-required|Sender requires recipients to acknowledged this email. To avoid endless 'Ok' replies.|
+|acknowledge-required-label|Allows changing the default label or the Acknowledge button.|
+
 
 ### Sending and receiving emails
 
@@ -298,10 +301,45 @@ ISO 8601 - Limited to UTC only, clients should convert the dates to the local da
 "sent-time": "2020-12-22T00:04:12Z"
 ```
 
+## Acknowledgement
+
+Sometimes the person who sends an email may require acknowledgement from its receivers. 
+To avoid simple replies like 'Ok', that are often sent as a `reply to all`, emails will show the receivers an 'Acknowledge' button. 
+Once pressed the sender, an only the sender, will be notified. Applies to everyone except people listed in the BCC field.
+
+By default, the label of this button will be 'Acknowledge' but can be customized.
+```
+{
+    ...
+    "to": ["logisticts@example.com"],
+    "cc": ["hr@sales.com"],
+    "bcc": ["cso@example.com"],
+    "acknowledge-required": true,
+    "acknowledge-required-label": "Understood",
+    "subject": "New security guidelines for 2022, please acknowledge.",
+    ...
+}
+```
+
+Every time a user hits the acknowledge button a message will be sent to the domain of the sender, for example:
+
+```
+{
+  "version": "0.0.1",
+  "type": "acknowledge",
+  "from": "james-hr@example.com",
+  "original-message-id": "3f97284d245c2aae1c74fa4c50a74c77c17b6e9b160cda0cf583e89ec7b7fc45",
+  "sent-time": "2021-11-29T16:13:56Z"
+}
+```
 
 ## Rich text markup
 
-For security reasons we should prevent the inclusion of HTML and Javascript code in messages. For these reasons a custom markup language will be used to format text in emails.
+For security reasons we should prevent the inclusion of HTML and Javascript code in messages. A custom markup language is proposed.
+
+This markup language is not meant to be extensive; it is only meant to support a subset of HTML-equivalent tags sufficient for creating good-looking emails.
+Tags like `iframe`,`script`,`form`,`input`,`select`,`embed`and `canvas`, among others, won't and shouldn't be allowed in the future. Even elements like images and
+hyperlinks will have restrictions.
 
 ### Basic text formatting
 
@@ -334,9 +372,6 @@ For security reasons we should prevent the inclusion of HTML and Javascript code
     [li]Coffee[/li]
 [/ul]
 ```
-
-The list is not meant to be extensive; it is only meant to support a subset of HTML tags sufficient for creating good-looking emails.
-Tags like `iframe`,`script`,`form`,`input`,`select`,`embed`and `canvas`, among others, won't and shouldn't be allowed in the future. This means no tracking/analytics scripts in the emails you receive.
 
 ### Images
 
@@ -648,7 +683,7 @@ the mail server of person B.
   "version": "0.0.1",
   "type": "public-key-request",
   "from": "john-doe@example.com",
-  "to": "lisa-miller@acme.com"
+  "to": ["lisa-miller@acme.com"]
 }
 ```
 
