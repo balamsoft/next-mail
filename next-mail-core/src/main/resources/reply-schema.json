@@ -14,6 +14,11 @@
       "type": "string",
       "enum": ["reply"]
     },
+    "encrypted": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true some of the email's contents (body, signature, attachments, among many other) must be encrypted using the receiver's public key. Must be true when replying to an encrypted email. Default: false."
+    },
     "from": {
       "description": "The email address of the sender.",
       "type": "string"
