@@ -2,9 +2,13 @@
 
 Next-Mail specification version 0.0.1.
 
-Please refer to the JSON schema files at [next-mail-core/src/main/resources](https://github.com/balamsoft/next-mail/tree/main/next-mail-core/src/main/resources).
+## Motivation
+
+To create a more secure, quickly evolving, open source alternative to traditional e-mail.
 
 ## Payload format
+
+Please refer to the JSON schema files at [next-mail-core/src/main/resources](https://github.com/balamsoft/next-mail/tree/main/next-mail-core/src/main/resources) for more details.
 
 Every email will be sent in JSON format and UTF-16 encoding (without JSON comments).
 All properties must follow the kebab-case naming convention.
@@ -110,7 +114,7 @@ So, when a domain receives an email the hash string must be stored as the `messa
 When an email is sent only one message is sent to each different domain instead of one message per receiver.
 The list of different domains can be obtained by looking at the receivers (from, to, cc, bcc) in the email.
 
-For example, when an email is sent as follows:
+For example:
 
 {
     "from": "steve@foo.com",
@@ -121,7 +125,7 @@ For example, when an email is sent as follows:
 }
 
 In this case there are four different domains involved: foo.com, bar.com, baz.org and zmail.com.
-However foo.com will save the email in the local database. This means that only 3 copies of this email will be sent over the net. 
+The domain foo.com will save the email in the local database. This means that only 3 copies of this email will be sent over the net. 
 After each domain receives its respective copy then each one of those servers will internally route a copy to each individual receiver.
 
 Following the previous example, foo.com will internally send a copy to steve@foo.com (sent folder) and one to each member of the sale-team group.
