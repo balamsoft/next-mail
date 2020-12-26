@@ -685,7 +685,7 @@ For this purpose the email must include the sender's public key, so it must be i
   "bcc": [],
   "sent-time": "2021-01-14T21:04:12Z",
 
-  "subject": "*encrypted subject using the Lisa's public key*",
+  "subject": "*encrypted subject using Lisa's public key*",
 
   "body":"*encrypted email body*",
   ...
