@@ -64,6 +64,16 @@
       "description": "Timestamp in ISO 8601, always at UTC timezone.",
       "type": "string"
     },
+    "acknowledge-required": {
+      "type": "boolean",
+      "description": "To avoid simple replies like 'Ok' that are often sent as replies to all by mistake. When true the receivers will see an 'Acknowledge' button in the email. Once pressed the sender (an only the sender) will be notified. Applies to everyone except people listed in the BCC field.",
+      "default": false
+    },
+    "acknowledge-required-label": {
+      "type": "string",
+      "description": "Only required when `acknowledge-required` is true. Custom button text label, default is 'Acknowledge'.",
+      "default": "Acknowledge"
+    },
     "subject": {
       "type": "string",
       "maxLength": 100,
