@@ -1,6 +1,6 @@
 # next-mail (v0.0.1)
 
-![Next Mail](./img/next-mail.png?raw=true "next-mail logo")
+![Next Mail](img/next-mail.png?raw=true "logo")
 
 ## Motivation
 
