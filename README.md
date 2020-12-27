@@ -1,6 +1,6 @@
 # next-mail (v0.0.1)
 
-Next-Mail specification version 0.0.1.
+![Alt text](img/next-mail.png?raw=true "next-mail logo")
 
 ## Motivation
 

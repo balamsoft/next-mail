@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.nextmail</groupId>
-    <artifactId>next-mail-java-client</artifactId>
+    <artifactId>next-mail-client-react</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
